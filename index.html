@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HIJRAH TOKO | Warung Modern</title>
+    <title>HIJRAH TOKO | Warung Alat Tulis & Frozen Food Terlengkap Di Pariaman</title>
     <link rel="stylesheet" href="style.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,6 +23,7 @@
                 <li><a href="#products">Produk</a></li>
                 <li><a href="#event">Event</a></li>
                 <li><a href="#contact">Contact Us</a></li>
+                <li><a href="admin.html" class="admin-link"><i class="fas fa-user-shield"></i> Admin</a></li>
             </ul>
             <div class="mobile-toggle">
                 <i class="fas fa-bars"></i>
@@ -72,13 +73,14 @@
             <h2 class="section-title">Tentang Kami</h2>
             <div class="about-content">
                 <div class="about-img">
-                    <img src="about-image.png" alt="Pemilik Hirah Toko">
+                    <img src="hijrahlogo_(2).png" alt="Pemilik Hirah Toko">
                 </div>
                 <div class="about-text">
                     <p>HIJRAH TOKO adalah warung modern yang menyediakan berbagai kebutuhan Alat Tulis Kantor (ATK) dan
                         Sekolah serta aneka Frozen Food dengan harga terjangkau dan kualitas terjamin.</p>
                     <p>Kami hadir untuk memenuhi kebutuhan produktivitas dan kuliner Anda dalam satu tempat yang nyaman.
-                        Silakan berkunjung dan rasakan pengalaman belanja yang ramah.</p>
+                        Silakan berkunjung alamat kami (jl.pariaman-sicincin bisati sungai sariak kec.VII koto sei
+                        sarik) dan rasakan pengalaman belanja yang ramah.</p>
                 </div>
             </div>
         </div>
@@ -137,25 +139,9 @@
     <section id="event" class="section">
         <div class="container">
             <h2 class="section-title">Event Terbaru</h2>
-            <div class="event-card">
-                <div class="event-date">
-                    <span class="day">25</span>
-                    <span class="month">Jan</span>
-                </div>
-                <div class="event-details">
-                    <h3>Pasar Murah Awal Tahun</h3>
-                    <p>Dapatkan diskon spesial untuk pembelian paket sembako. Jangan lewatkan kesempatan ini!</p>
-                </div>
-            </div>
-            <div class="event-card">
-                <div class="event-date">
-                    <span class="day">02</span>
-                    <span class="month">Feb</span>
-                </div>
-                <div class="event-details">
-                    <h3>Jumat Berkah</h3>
-                    <p>Berbagi makanan gratis setiap hari Jumat untuk yang membutuhkan di depan toko.</p>
-                </div>
+            <div id="events-container">
+                <!-- Events will be loaded dynamically from database -->
+                <p style="text-align: center; color: #888;">Loading events...</p>
             </div>
         </div>
     </section>
@@ -206,7 +192,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>

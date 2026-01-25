@@ -159,6 +159,25 @@ img {
     left: 0;
 }
 
+/* Admin Link Special Styling */
+.nav-links li a.admin-link {
+    background: var(--primary-red);
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-links li a.admin-link:hover {
+    background: transparent;
+    border: 1px solid var(--primary-red);
+}
+
+.nav-links li a.admin-link::after {
+    display: none;
+}
+
 .mobile-toggle {
     display: none;
     color: var(--primary-white);

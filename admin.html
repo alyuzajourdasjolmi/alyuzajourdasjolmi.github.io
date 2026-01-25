@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HIJRAH TOKO</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-container {
+            padding: 100px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .product-table th,
+        .product-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .product-table th {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">HIJRAH<span>ADMIN</span></a>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="index.html" class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">
+                    <i class="fas fa-home"></i> Kembali ke Home
+                </a>
+                <div id="user-info" style="color: white;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <div id="login-section" class="container">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn-primary" style="width:100%">Login</button>
+            </form>
+            <p id="login-error" style="color: red; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="admin-container dashboard">
+        <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center; ">
+            <h2>Manage Products</h2>
+            <div>
+                <button id="add-product-btn" class="btn-primary">Add New Product</button>
+                <button id="logout-btn" style="background:#333;" class="btn-primary">Logout</button>
+            </div>
+        </div>
+
+        <!-- Add/Edit Form -->
+        <div id="product-form-container"
+            style="display:none; background: #f9f9f9; padding: 20px; margin-top: 20px; border-radius: 8px;">
+            <h3 id="form-title">Add Product</h3>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="prod-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" id="prod-price" placeholder="Rp 0" required>
+                </div>
+                <div class="form-group">
+                    <label>Image Filename</label>
+                    <input type="text" id="prod-image" placeholder="image.png">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="prod-category" required>
+                        <option value="Alat Tulis">Alat Tulis</option>
+                        <option value="Frozen Food">Frozen Food</option>
+                        <option value="Snack & Minuman">Snack & Minuman</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" id="cancel-btn" style="background:#ccc; color:#000;"
+                    class="btn-primary">Cancel</button>
+            </form>
+        </div>
+
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                <!-- Data injected here -->
+            </tbody>
+        </table>
+
+        <!-- Events Management Section -->
+        <hr style="margin: 40px 0; border-color: #ddd;">
+
+        <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+            <h2>Manage Events</h2>
+            <button id="add-event-btn" class="btn-primary">Add New Event</button>
+        </div>
+
+        <!-- Add/Edit Event Form -->
+        <div id="event-form-container"
+            style="display:none; background: #f9f9f9; padding: 20px; margin-top: 20px; border-radius: 8px;">
+            <h3 id="event-form-title">Add Event</h3>
+            <form id="event-form">
+                <input type="hidden" id="event-id">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="event-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="event-description" rows="3"
+                        style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" required></textarea>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Day (1-31)</label>
+                        <input type="number" id="event-day" min="1" max="31" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Month</label>
+                        <select id="event-month" required>
+                            <option value="Jan">Jan</option>
+                            <option value="Feb">Feb</option>
+                            <option value="Mar">Mar</option>
+                            <option value="Apr">Apr</option>
+                            <option value="May">May</option>
+                            <option value="Jun">Jun</option>
+                            <option value="Jul">Jul</option>
+                            <option value="Aug">Aug</option>
+                            <option value="Sep">Sep</option>
+                            <option value="Oct">Oct</option>
+                            <option value="Nov">Nov</option>
+                            <option value="Dec">Dec</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Save Event</button>
+                <button type="button" id="cancel-event-btn" style="background:#ccc; color:#000;"
+                    class="btn-primary">Cancel</button>
+            </form>
+        </div>
+
+        <table class="product-table" style="margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="event-table-body">
+                <!-- Data injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="admin.js" defer></script>
+</body>
+
+</html>
