@@ -12,12 +12,13 @@ CREATE TABLE IF NOT EXISTS products (
   category VARCHAR(100) NOT NULL
 );
 
--- Table: events
+-- Table: events (menggunakan event_day + event_month)
 CREATE TABLE IF NOT EXISTS events (
   id BIGSERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
-  date_display VARCHAR(50) NOT NULL,  -- e.g. "25 Jan"
-  description TEXT
+  description TEXT NOT NULL,
+  event_day INT NOT NULL,
+  event_month VARCHAR(10) NOT NULL
 );
 
 -- Table: carousel
@@ -32,22 +33,19 @@ CREATE TABLE IF NOT EXISTS carousel (
 -- Row Level Security (RLS) Policies
 -- ============================================
 
--- Enable RLS
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE carousel ENABLE ROW LEVEL SECURITY;
 
--- PUBLIC READ: Semua orang bisa membaca data (untuk halaman utama)
+-- PUBLIC READ
 CREATE POLICY "Public read products" ON products
   FOR SELECT USING (true);
-
 CREATE POLICY "Public read events" ON events
   FOR SELECT USING (true);
-
 CREATE POLICY "Public read carousel" ON carousel
   FOR SELECT USING (true);
 
--- AUTHENTICATED WRITE: Hanya user yang sudah login bisa insert/update/delete
+-- AUTHENTICATED WRITE (insert/update/delete)
 CREATE POLICY "Auth insert products" ON products
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 CREATE POLICY "Auth update products" ON products
@@ -70,10 +68,10 @@ CREATE POLICY "Auth delete carousel" ON carousel
   FOR DELETE USING (auth.role() = 'authenticated');
 
 -- ============================================
--- Seed Data (Optional — Hapus jika tidak perlu)
+-- Seed Data
 -- ============================================
 
--- Seed Products
+-- Products
 INSERT INTO products (name, price, image, category) VALUES
 ('Buku Tulis Sidu', 'Rp 3.000', 'SIDU BC-01.jpg', 'Alat Tulis'),
 ('Buku Tulis Kiky', 'Rp 6.000', 'prod-stationery.png', 'Alat Tulis'),
@@ -98,12 +96,12 @@ INSERT INTO products (name, price, image, category) VALUES
 ('Minuman Teh', 'Rp 4.000', 'prod-stationery.png', 'Snack & Minuman'),
 ('Es Krim', 'Rp 5.000', 'prod-frozen.png', 'Snack & Minuman');
 
--- Seed Events
-INSERT INTO events (title, date_display, description) VALUES
-('Pasar Murah Awal Tahun', '25 Jan', 'Dapatkan diskon spesial untuk pembelian paket sembako.'),
-('Jumat Berkah', '02 Feb', 'Berbagi makanan gratis setiap hari Jumat untuk yang membutuhkan.');
+-- Events
+INSERT INTO events (title, description, event_day, event_month) VALUES
+('Pasar Murah Awal Tahun', 'Dapatkan diskon spesial untuk pembelian paket sembako. Jangan lewatkan kesempatan ini!', 25, 'Jan'),
+('Jumat Berkah', 'Berbagi makanan gratis setiap hari Jumat untuk yang membutuhkan di depan toko.', 2, 'Feb');
 
--- Seed Carousel
+-- Carousel
 INSERT INTO carousel (image, title, subtitle) VALUES
 ('hero-image-v3.png', 'Selamat Datang di HIJRAH TOKO', 'Pusat Alat Tulis & Frozen Food Terlengkap'),
 ('prod-frozen.png', 'Promo Spesial Minggu Ini', 'Dapatkan harga terbaik untuk kebutuhan harianmu.'),

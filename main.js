@@ -56,7 +56,6 @@ async function loadCarousel() {
 
     if (!container || !slidesData || slidesData.length === 0) return;
 
-    // Render Slides
     container.innerHTML = slidesData.map((slide, index) => `
         <div class="slide ${index === 0 ? 'active' : ''}">
             <img src="${slide.image}" alt="${slide.title}" onerror="this.src='hero-image-v3.png'">
@@ -68,12 +67,10 @@ async function loadCarousel() {
         </div>
     `).join('');
 
-    // Render Dots
     dotsContainer.innerHTML = slidesData.map((_, index) => `
         <div class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
     `).join('');
 
-    // Initialize Logic
     initCarouselLogic();
 }
 
@@ -102,24 +99,18 @@ function initCarouselLogic() {
     function nextSlide() { goToSlide(currentSlide + 1); }
     function prevSlide() { goToSlide(currentSlide - 1); }
 
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
-    }
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
-    }
+    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
 
     dots.forEach(dot => {
         dot.addEventListener('click', () => {
-            const index = parseInt(dot.getAttribute('data-index'));
-            goToSlide(index);
+            goToSlide(parseInt(dot.getAttribute('data-index')));
             resetTimer();
         });
     });
 
     function startTimer() { slideInterval = setInterval(nextSlide, 5000); }
     function resetTimer() { clearInterval(slideInterval); startTimer(); }
-
     startTimer();
 }
 
@@ -140,25 +131,22 @@ async function loadEvents() {
     if (!container) return;
 
     if (!eventsData || eventsData.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Belum ada event terbaru.</p>';
+        container.innerHTML = '<p style="text-align:center; color:#888;">Belum ada event terbaru.</p>';
         return;
     }
 
-    container.innerHTML = eventsData.map(evt => {
-        const [day, month] = evt.date_display.split(' ');
-        return `
-            <div class="event-card">
-                <div class="event-date">
-                    <span class="day">${day || '?'}</span>
-                    <span class="month">${month || ''}</span>
-                </div>
-                <div class="event-details">
-                    <h3>${evt.title}</h3>
-                    <p>${evt.description}</p>
-                </div>
+    container.innerHTML = eventsData.map(evt => `
+        <div class="event-card">
+            <div class="event-date">
+                <span class="day">${String(evt.event_day).padStart(2, '0')}</span>
+                <span class="month">${evt.event_month}</span>
             </div>
-        `;
-    }).join('');
+            <div class="event-details">
+                <h3>${evt.title}</h3>
+                <p>${evt.description}</p>
+            </div>
+        </div>
+    `).join('');
 }
 
 
@@ -185,7 +173,7 @@ productCards.forEach(card => {
                 return;
             }
 
-            const filteredProducts = allProducts.filter(p => p.category === title);
+            const filteredProducts = (allProducts || []).filter(p => p.category === title);
             showModal(title, filteredProducts);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -200,7 +188,7 @@ function showModal(title, items, isLoading = false) {
     if (isLoading) {
         contentHtml += '<p>Loading products...</p>';
     } else if (items.length === 0) {
-        contentHtml += '<p>No products found in this category.</p>';
+        contentHtml += '<p>Belum ada produk di kategori ini.</p>';
     } else {
         contentHtml += '<div class="modal-product-grid">';
         items.forEach(item => {
