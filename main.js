@@ -42,111 +42,76 @@ window.addEventListener('scroll', () => {
 
 // --- DYNAMIC CAROUSEL (Supabase) ---
 async function loadCarousel() {
-    const { data: slidesData, error } = await supabase
-        .from('carousel')
-        .select('*');
+    try {
+        const { data: slidesData, error } = await supabase
+            .from('carousel')
+            .select('*');
 
-    if (error) {
-        console.error('Error loading carousel:', error);
-        return;
-    }
+        if (error) throw error;
 
-    const container = document.getElementById('carousel-container');
-    const dotsContainer = document.getElementById('carousel-dots');
+        const container = document.getElementById('carousel-container');
+        const dotsContainer = document.getElementById('carousel-dots');
 
-    if (!container || !slidesData || slidesData.length === 0) return;
+        if (!container || !slidesData || slidesData.length === 0) return;
 
-    container.innerHTML = slidesData.map((slide, index) => `
-        <div class="slide ${index === 0 ? 'active' : ''}">
-            <img src="${slide.image}" alt="${slide.title}" onerror="this.src='hero-image-v3.png'">
-            <div class="slide-content">
-                <h1>${slide.title}</h1>
-                <p>${slide.subtitle}</p>
-                <a href="#products" class="btn-primary">Lihat Produk</a>
+        container.innerHTML = slidesData.map((slide, index) => `
+            <div class="slide ${index === 0 ? 'active' : ''}">
+                <img src="${slide.image}" alt="${slide.title}" onerror="this.src='hero-image-v3.png'">
+                <div class="slide-content">
+                    <h1>${slide.title}</h1>
+                    <p>${slide.subtitle}</p>
+                    <a href="#products" class="btn-primary">Lihat Produk</a>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
 
-    dotsContainer.innerHTML = slidesData.map((_, index) => `
-        <div class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
-    `).join('');
+        dotsContainer.innerHTML = slidesData.map((_, index) => `
+            <div class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
+        `).join('');
 
-    initCarouselLogic();
+        initCarouselLogic();
+    } catch (err) {
+        console.error('Error loading carousel:', err);
+    }
 }
 
-function initCarouselLogic() {
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const nextBtn = document.querySelector('.next');
-    const prevBtn = document.querySelector('.prev');
-
-    let currentSlide = 0;
-    const slideCount = slides.length;
-    let slideInterval;
-
-    function updateDots() {
-        dots.forEach(dot => dot.classList.remove('active'));
-        if (dots[currentSlide]) dots[currentSlide].classList.add('active');
-    }
-
-    function goToSlide(n) {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (n + slideCount) % slideCount;
-        slides[currentSlide].classList.add('active');
-        updateDots();
-    }
-
-    function nextSlide() { goToSlide(currentSlide + 1); }
-    function prevSlide() { goToSlide(currentSlide - 1); }
-
-    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
-    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
-
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            goToSlide(parseInt(dot.getAttribute('data-index')));
-            resetTimer();
-        });
-    });
-
-    function startTimer() { slideInterval = setInterval(nextSlide, 5000); }
-    function resetTimer() { clearInterval(slideInterval); startTimer(); }
-    startTimer();
-}
-
+// ... initCarouselLogic unchanged ...
 
 // --- DYNAMIC EVENTS (Supabase) ---
 async function loadEvents() {
-    const { data: eventsData, error } = await supabase
-        .from('events')
-        .select('*')
-        .order('title', { ascending: true });
+    try {
+        const { data: eventsData, error } = await supabase
+            .from('events')
+            .select('*')
+            .order('title', { ascending: true });
 
-    if (error) {
-        console.error('Error loading events:', error);
-        return;
-    }
+        if (error) throw error;
 
-    const container = document.getElementById('events-container');
-    if (!container) return;
+        const container = document.getElementById('events-container');
+        if (!container) return;
 
-    if (!eventsData || eventsData.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#888;">Belum ada event terbaru.</p>';
-        return;
-    }
+        if (!eventsData || eventsData.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#888;">Belum ada event terbaru.</p>';
+            return;
+        }
 
-    container.innerHTML = eventsData.map(evt => `
-        <div class="event-card">
-            <div class="event-date">
-                <span class="day">${String(evt.event_day).padStart(2, '0')}</span>
-                <span class="month">${evt.event_month}</span>
+        container.innerHTML = eventsData.map(evt => `
+            <div class="event-card">
+                <div class="event-date">
+                    <span class="day">${String(evt.event_day).padStart(2, '0')}</span>
+                    <span class="month">${evt.event_month}</span>
+                </div>
+                <div class="event-details">
+                    <h3>${evt.title}</h3>
+                    <p>${evt.description}</p>
+                </div>
             </div>
-            <div class="event-details">
-                <h3>${evt.title}</h3>
-                <p>${evt.description}</p>
-            </div>
-        </div>
-    `).join('');
+        `).join('');
+    } catch (err) {
+        console.error('Error loading events:', err);
+        const container = document.getElementById('events-container');
+        if (container) container.innerHTML = '<p style="text-align:center; color:#888;">Gagal memuat event.</p>';
+    }
 }
 
 

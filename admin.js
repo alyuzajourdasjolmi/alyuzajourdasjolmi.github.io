@@ -9,6 +9,7 @@ const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
 const userInfo = document.getElementById('user-info');
+const toastContainer = document.getElementById('toast-container');
 
 // Product elements
 const productTableBody = document.getElementById('product-table-body');
@@ -24,7 +25,29 @@ const eventForm = document.getElementById('event-form');
 const addEventBtn = document.getElementById('add-event-btn');
 const cancelEventBtn = document.getElementById('cancel-event-btn');
 
-// --- AUTH (Supabase) ---
+// =============================================
+// UI FEEDBACK (Toast)
+// =============================================
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+
+    toast.innerHTML = `<i class="fas fa-${icon}"></i> <span>${message}</span>`;
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-hide');
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// =============================================
+// AUTH (Supabase)
+// =============================================
 async function checkUser() {
     console.log("Checking authentication status...");
     try {
@@ -49,18 +72,16 @@ async function checkUser() {
 }
 
 function showLogin() {
-    console.log("Showing login screen");
     loginSection.style.display = 'block';
     dashboardSection.style.display = 'none';
     dashboardSection.classList.remove('active');
 }
 
 function showDashboard(user) {
-    console.log("Showing dashboard for:", user.email);
     loginSection.style.display = 'none';
     dashboardSection.style.display = 'block';
     dashboardSection.classList.add('active');
-    if (userInfo) userInfo.innerText = `Welcome, ${user.email}`;
+    if (userInfo) userInfo.innerText = `Halo, ${user.email}`;
     fetchProducts();
     fetchEvents();
 }
@@ -72,13 +93,6 @@ if (loginForm) {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        console.log("Attempting login for:", email);
-
-        if (loginError) {
-            loginError.innerText = '';
-            loginError.style.display = 'none';
-        }
-
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
@@ -86,21 +100,17 @@ if (loginForm) {
             });
 
             if (error) {
-                console.error("Login failed:", error.message);
+                showToast(error.message, 'error');
                 if (loginError) {
                     loginError.innerText = error.message;
                     loginError.style.display = 'block';
                 }
             } else {
-                console.log("Login success!");
+                showToast("Login Berhasil!", "success");
                 checkUser();
             }
         } catch (err) {
-            console.error("CORS or Connection Error during login:", err);
-            if (loginError) {
-                loginError.innerText = 'Connection error. Please ensure you are running the project via "npm run dev".';
-                loginError.style.display = 'block';
-            }
+            showToast("Gagal terhubung ke server. Pastikan koneksi internet stabil.", "error");
         }
     });
 }
@@ -108,8 +118,13 @@ if (loginForm) {
 // Logout handler
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        checkUser();
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            showToast("Gagal Logout: " + error.message, "error");
+        } else {
+            showToast("Berhasil Logout", "success");
+            checkUser();
+        }
     });
 }
 
@@ -117,16 +132,17 @@ if (logoutBtn) {
 // PRODUCT MANAGEMENT
 // =============================================
 async function fetchProducts() {
-    const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('name', { ascending: true });
+    try {
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .order('name', { ascending: true });
 
-    if (error) {
-        console.error('Error fetching products:', error);
-        return;
+        if (error) throw error;
+        renderProducts(data || []);
+    } catch (err) {
+        showToast("Gagal memuat produk: " + err.message, "error");
     }
-    renderProducts(data || []);
 }
 
 function renderProducts(products) {
@@ -141,14 +157,13 @@ function renderProducts(products) {
             <td>${p.category || ''}</td>
             <td>${p.image || ''}</td>
             <td>
-                <button class="action-btn btn-edit" data-id="${p.id}">Edit</button>
-                <button class="action-btn btn-delete" data-id="${p.id}">Delete</button>
+                <button class="action-btn btn-edit" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button>
+                <button class="action-btn btn-delete" data-id="${p.id}"><i class="fas fa-trash"></i> Hapus</button>
             </td>
         `;
         productTableBody.appendChild(tr);
     });
 
-    // Attach event listeners
     document.querySelectorAll('#product-table-body .btn-edit').forEach(btn => {
         btn.addEventListener('click', () => editProduct(btn.dataset.id, products));
     });
@@ -159,26 +174,21 @@ function renderProducts(products) {
     window.allProducts = products;
 }
 
-// Add Product button
 if (addProductBtn) {
     addProductBtn.addEventListener('click', () => {
         if (productForm) productForm.reset();
-        const productId = document.getElementById('product-id');
-        if (productId) productId.value = '';
-        const formTitle = document.getElementById('form-title');
-        if (formTitle) formTitle.innerText = 'Add Product';
-        if (productFormContainer) productFormContainer.style.display = 'block';
+        document.getElementById('product-id').value = '';
+        document.getElementById('form-title').innerText = 'Tambah Produk Baru';
+        productFormContainer.style.display = 'block';
     });
 }
 
-// Cancel Product button
 if (cancelBtn) {
     cancelBtn.addEventListener('click', () => {
-        if (productFormContainer) productFormContainer.style.display = 'none';
+        productFormContainer.style.display = 'none';
     });
 }
 
-// Edit Product
 function editProduct(id, products) {
     const p = products.find(x => x.id == id);
     if (p) {
@@ -187,45 +197,51 @@ function editProduct(id, products) {
         document.getElementById('prod-price').value = p.price;
         document.getElementById('prod-image').value = p.image || '';
         document.getElementById('prod-category').value = p.category;
-        const formTitle = document.getElementById('form-title');
-        if (formTitle) formTitle.innerText = 'Edit Product';
-        if (productFormContainer) productFormContainer.style.display = 'block';
+        document.getElementById('form-title').innerText = 'Edit Produk';
+        productFormContainer.style.display = 'block';
     }
 }
 
-// Delete Product
 async function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        const { error } = await supabase.from('products').delete().eq('id', id);
-        if (error) console.error('Delete error:', error);
-        fetchProducts();
+    if (confirm('Hapus produk ini?')) {
+        try {
+            const { error } = await supabase.from('products').delete().eq('id', id);
+            if (error) throw error;
+            showToast("Produk berhasil dihapus", "success");
+            fetchProducts();
+        } catch (err) {
+            showToast("Gagal menghapus: " + err.message, "error");
+        }
     }
 }
 
-// Product Form Submit
 if (productForm) {
     productForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const productId = document.getElementById('product-id');
-        const id = productId ? productId.value : '';
+        const id = document.getElementById('product-id').value;
 
         const productData = {
-            name: document.getElementById('prod-name')?.value || '',
-            price: document.getElementById('prod-price')?.value || '',
-            image: document.getElementById('prod-image')?.value || '',
-            category: document.getElementById('prod-category')?.value || ''
+            name: document.getElementById('prod-name').value,
+            price: document.getElementById('prod-price').value,
+            image: document.getElementById('prod-image').value,
+            category: document.getElementById('prod-category').value
         };
 
-        if (id) {
-            const { error } = await supabase.from('products').update(productData).eq('id', id);
-            if (error) { console.error('Update error:', error); alert('Error: ' + error.message); }
-        } else {
-            const { error } = await supabase.from('products').insert(productData);
-            if (error) { console.error('Insert error:', error); alert('Error: ' + error.message); }
+        try {
+            if (id) {
+                const { error } = await supabase.from('products').update(productData).eq('id', id);
+                if (error) throw error;
+                showToast("Produk berhasil diperbarui", "success");
+            } else {
+                const { error } = await supabase.from('products').insert(productData);
+                if (error) throw error;
+                showToast("Produk berhasil ditambah", "success");
+            }
+            productFormContainer.style.display = 'none';
+            fetchProducts();
+        } catch (err) {
+            showToast("Gagal menyimpan: " + err.message, "error");
         }
-
-        if (productFormContainer) productFormContainer.style.display = 'none';
-        fetchProducts();
     });
 }
 
@@ -233,16 +249,17 @@ if (productForm) {
 // EVENTS MANAGEMENT
 // =============================================
 async function fetchEvents() {
-    const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .order('title', { ascending: true });
+    try {
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .order('title', { ascending: true });
 
-    if (error) {
-        console.error('Error fetching events:', error);
-        return;
+        if (error) throw error;
+        renderEvents(data || []);
+    } catch (err) {
+        showToast("Gagal memuat event: " + err.message, "error");
     }
-    renderEvents(data || []);
 }
 
 function renderEvents(events) {
@@ -256,14 +273,13 @@ function renderEvents(events) {
             <td>${e.title || ''}</td>
             <td>${e.description || ''}</td>
             <td>
-                <button class="action-btn btn-edit" data-event-id="${e.id}">Edit</button>
-                <button class="action-btn btn-delete" data-event-id="${e.id}">Delete</button>
+                <button class="action-btn btn-edit" data-event-id="${e.id}"><i class="fas fa-edit"></i> Edit</button>
+                <button class="action-btn btn-delete" data-event-id="${e.id}"><i class="fas fa-trash"></i> Hapus</button>
             </td>
         `;
         eventTableBody.appendChild(tr);
     });
 
-    // Attach event listeners
     document.querySelectorAll('[data-event-id].btn-edit').forEach(btn => {
         btn.addEventListener('click', () => editEvent(btn.dataset.eventId, events));
     });
@@ -272,26 +288,21 @@ function renderEvents(events) {
     });
 }
 
-// Add Event button
 if (addEventBtn) {
     addEventBtn.addEventListener('click', () => {
         if (eventForm) eventForm.reset();
-        const eventId = document.getElementById('event-id');
-        if (eventId) eventId.value = '';
-        const formTitle = document.getElementById('event-form-title');
-        if (formTitle) formTitle.innerText = 'Add Event';
-        if (eventFormContainer) eventFormContainer.style.display = 'block';
+        document.getElementById('event-id').value = '';
+        document.getElementById('event-form-title').innerText = 'Tambah Event Baru';
+        eventFormContainer.style.display = 'block';
     });
 }
 
-// Cancel Event button
 if (cancelEventBtn) {
     cancelEventBtn.addEventListener('click', () => {
-        if (eventFormContainer) eventFormContainer.style.display = 'none';
+        eventFormContainer.style.display = 'none';
     });
 }
 
-// Edit Event
 function editEvent(id, events) {
     const e = events.find(x => x.id == id);
     if (e) {
@@ -300,49 +311,52 @@ function editEvent(id, events) {
         document.getElementById('event-description').value = e.description;
         document.getElementById('event-day').value = e.event_day;
         document.getElementById('event-month').value = e.event_month;
-        const formTitle = document.getElementById('event-form-title');
-        if (formTitle) formTitle.innerText = 'Edit Event';
-        if (eventFormContainer) eventFormContainer.style.display = 'block';
+        document.getElementById('event-form-title').innerText = 'Edit Event';
+        eventFormContainer.style.display = 'block';
     }
 }
 
-// Delete Event
 async function deleteEvent(id) {
-    if (confirm('Are you sure you want to delete this event?')) {
-        const { error } = await supabase.from('events').delete().eq('id', id);
-        if (error) console.error('Delete error:', error);
-        fetchEvents();
+    if (confirm('Hapus event ini?')) {
+        try {
+            const { error } = await supabase.from('events').delete().eq('id', id);
+            if (error) throw error;
+            showToast("Event berhasil dihapus", "success");
+            fetchEvents();
+        } catch (err) {
+            showToast("Gagal menghapus event: " + err.message, "error");
+        }
     }
 }
 
-// Event Form Submit
 if (eventForm) {
     eventForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const eventId = document.getElementById('event-id');
-        const id = eventId ? eventId.value : '';
+        const id = document.getElementById('event-id').value;
 
         const eventData = {
-            title: document.getElementById('event-title')?.value || '',
-            description: document.getElementById('event-description')?.value || '',
-            event_day: parseInt(document.getElementById('event-day')?.value) || 1,
-            event_month: document.getElementById('event-month')?.value || 'Jan'
+            title: document.getElementById('event-title').value,
+            description: document.getElementById('event-description').value,
+            event_day: parseInt(document.getElementById('event-day').value),
+            event_month: document.getElementById('event-month').value
         };
 
-        if (id) {
-            const { error } = await supabase.from('events').update(eventData).eq('id', id);
-            if (error) { console.error('Update error:', error); alert('Error: ' + error.message); }
-        } else {
-            const { error } = await supabase.from('events').insert(eventData);
-            if (error) { console.error('Insert error:', error); alert('Error: ' + error.message); }
+        try {
+            if (id) {
+                const { error } = await supabase.from('events').update(eventData).eq('id', id);
+                if (error) throw error;
+                showToast("Event berhasil diperbarui", "success");
+            } else {
+                const { error } = await supabase.from('events').insert(eventData);
+                if (error) throw error;
+                showToast("Event berhasil ditambah", "success");
+            }
+            eventFormContainer.style.display = 'none';
+            fetchEvents();
+        } catch (err) {
+            showToast("Gagal menyimpan event: " + err.message, "error");
         }
-
-        if (eventFormContainer) eventFormContainer.style.display = 'none';
-        fetchEvents();
     });
 }
 
-// =============================================
-// INITIALIZATION
-// =============================================
 checkUser();
