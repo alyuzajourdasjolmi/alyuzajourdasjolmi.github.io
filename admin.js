@@ -49,6 +49,12 @@ function showToast(message, type = 'info') {
 // AUTH (Supabase)
 // =============================================
 async function checkUser() {
+    if (!supabase) {
+        showToast("Error: Supabase tidak terhubung. Gunakan 'npm run dev'.", "error");
+        showLogin();
+        return;
+    }
+
     console.log("Checking authentication status...");
     try {
         const { data, error } = await supabase.auth.getUser();

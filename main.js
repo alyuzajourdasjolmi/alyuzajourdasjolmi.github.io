@@ -42,6 +42,10 @@ window.addEventListener('scroll', () => {
 
 // --- DYNAMIC CAROUSEL (Supabase) ---
 async function loadCarousel() {
+    if (!supabase) {
+        console.warn("Carousel gagal dimuat: Supabase tidak terhubung.");
+        return;
+    }
     try {
         const { data: slidesData, error } = await supabase
             .from('carousel')
@@ -79,6 +83,10 @@ async function loadCarousel() {
 
 // --- DYNAMIC EVENTS (Supabase) ---
 async function loadEvents() {
+    if (!supabase) {
+        console.warn("Event gagal dimuat: Supabase tidak terhubung.");
+        return;
+    }
     try {
         const { data: eventsData, error } = await supabase
             .from('events')
