@@ -40,6 +40,7 @@
             display: block;
         }
 
+<<<<<<< HEAD
         .tabs {
             display: flex;
             gap: 10px;
@@ -71,6 +72,8 @@
             display: block;
         }
 
+=======
+>>>>>>> bb238c87cd66efa557ed17085218ed8baadd6ef9
         .product-table {
             width: 100%;
             border-collapse: collapse;
@@ -118,13 +121,18 @@
         }
 
         .form-group input,
+<<<<<<< HEAD
         .form-group select,
         .form-group textarea {
+=======
+        .form-group select {
+>>>>>>> bb238c87cd66efa557ed17085218ed8baadd6ef9
             width: 100%;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+<<<<<<< HEAD
 
         .modal-form {
             display: none;
@@ -134,6 +142,8 @@
             border-radius: 8px;
             border: 1px solid #ddd;
         }
+=======
+>>>>>>> bb238c87cd66efa557ed17085218ed8baadd6ef9
     </style>
 </head>
 
@@ -143,9 +153,17 @@
     <nav class="navbar">
         <div class="container nav-container">
             <a href="index.html" class="logo">HIJRAH<span>ADMIN</span></a>
+<<<<<<< HEAD
             <div id="user-info" style="color: white; display: flex; align-items: center; gap: 20px;">
                 <span id="user-email"></span>
                 <button id="logout-btn" style="background:#333; font-size: 0.9rem;" class="btn-primary">Logout</button>
+=======
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="index.html" class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">
+                    <i class="fas fa-home"></i> Kembali ke Home
+                </a>
+                <div id="user-info" style="color: white;"></div>
+>>>>>>> bb238c87cd66efa557ed17085218ed8baadd6ef9
             </div>
         </div>
     </nav>
@@ -165,6 +183,7 @@
 
     <!-- Dashboard Section -->
     <div id="dashboard-section" class="admin-container dashboard">
+<<<<<<< HEAD
         <div class="tabs">
             <button class="tab-btn active" data-tab="products">Products</button>
             <button class="tab-btn" data-tab="events">Events</button>
@@ -309,6 +328,131 @@
     </div>
 
     <script type="module" src="admin.js"></script>
+=======
+        <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center; ">
+            <h2>Manage Products</h2>
+            <div>
+                <button id="add-product-btn" class="btn-primary">Add New Product</button>
+                <button id="logout-btn" style="background:#333;" class="btn-primary">Logout</button>
+            </div>
+        </div>
+
+        <!-- Add/Edit Form -->
+        <div id="product-form-container"
+            style="display:none; background: #f9f9f9; padding: 20px; margin-top: 20px; border-radius: 8px;">
+            <h3 id="form-title">Add Product</h3>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="prod-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" id="prod-price" placeholder="Rp 0" required>
+                </div>
+                <div class="form-group">
+                    <label>Image Filename</label>
+                    <input type="text" id="prod-image" placeholder="image.png">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="prod-category" required>
+                        <option value="Alat Tulis">Alat Tulis</option>
+                        <option value="Frozen Food">Frozen Food</option>
+                        <option value="Snack & Minuman">Snack & Minuman</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="button" id="cancel-btn" style="background:#ccc; color:#000;"
+                    class="btn-primary">Cancel</button>
+            </form>
+        </div>
+
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                <!-- Data injected here -->
+            </tbody>
+        </table>
+
+        <!-- Events Management Section -->
+        <hr style="margin: 40px 0; border-color: #ddd;">
+
+        <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+            <h2>Manage Events</h2>
+            <button id="add-event-btn" class="btn-primary">Add New Event</button>
+        </div>
+
+        <!-- Add/Edit Event Form -->
+        <div id="event-form-container"
+            style="display:none; background: #f9f9f9; padding: 20px; margin-top: 20px; border-radius: 8px;">
+            <h3 id="event-form-title">Add Event</h3>
+            <form id="event-form">
+                <input type="hidden" id="event-id">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="event-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="event-description" rows="3"
+                        style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" required></textarea>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Day (1-31)</label>
+                        <input type="number" id="event-day" min="1" max="31" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Month</label>
+                        <select id="event-month" required>
+                            <option value="Jan">Jan</option>
+                            <option value="Feb">Feb</option>
+                            <option value="Mar">Mar</option>
+                            <option value="Apr">Apr</option>
+                            <option value="May">May</option>
+                            <option value="Jun">Jun</option>
+                            <option value="Jul">Jul</option>
+                            <option value="Aug">Aug</option>
+                            <option value="Sep">Sep</option>
+                            <option value="Oct">Oct</option>
+                            <option value="Nov">Nov</option>
+                            <option value="Dec">Dec</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Save Event</button>
+                <button type="button" id="cancel-event-btn" style="background:#ccc; color:#000;"
+                    class="btn-primary">Cancel</button>
+            </form>
+        </div>
+
+        <table class="product-table" style="margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="event-table-body">
+                <!-- Data injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="admin.js" defer></script>
+>>>>>>> bb238c87cd66efa557ed17085218ed8baadd6ef9
 </body>
 
 </html>

@@ -152,11 +152,9 @@ productForm.addEventListener('submit', async (e) => {
     };
 
     if (id) {
-        // UPDATE
         const { error } = await supabase.from('products').update(productData).eq('id', id);
         if (error) console.error('Update error:', error);
     } else {
-        // INSERT
         const { error } = await supabase.from('products').insert(productData);
         if (error) console.error('Insert error:', error);
     }
