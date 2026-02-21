@@ -112,9 +112,9 @@ const productCards = document.querySelectorAll('.product-card');
 // Augmented Product Data with Images and Prices
 const productsData = {
     'Alat Tulis': [
-        { name: 'Buku Tulis Sidu 58', price: 'Rp 5.000', image: 'prod-stationery.png' },
+        { name: 'Buku Tulis Sidu', price: 'Rp 3.000', image: 'SIDU BC-01.jpg' },
         { name: 'Buku Tulis Kiky', price: 'Rp 6.000', image: 'prod-stationery.png' },
-        { name: 'Pulpen Standard', price: 'Rp 3.000', image: 'prod-stationery.png' },
+        { name: 'Pulpen Standard', price: 'Rp 3.000', image: 'penastandar.jpg' },
         { name: 'Pulpen Gel', price: 'Rp 5.000', image: 'prod-stationery.png' },
         { name: 'Pensil 2B', price: 'Rp 4.000', image: 'prod-stationery.png' },
         { name: 'Penghapus', price: 'Rp 2.000', image: 'prod-stationery.png' },
@@ -124,14 +124,14 @@ const productsData = {
         { name: 'Lem Kertas', price: 'Rp 3.000', image: 'prod-stationery.png' }
     ],
     'Frozen Food': [
-        { name: 'Nugget So Good', price: 'Rp 45.000', image: 'prod-frozen.png' },
-        { name: 'Nugget Champ', price: 'Rp 30.000', image: 'prod-frozen.png' },
-        { name: 'Sosis Sapi', price: 'Rp 25.000', image: 'prod-frozen.png' },
-        { name: 'Sosis Ayam', price: 'Rp 20.000', image: 'prod-frozen.png' },
+        { name: 'Nugget Ayam Toraduo', price: 'Rp 25.000', image: 'NUGGET_AYAM_TORADUO.PNG' },
+        { name: 'Sosis', price: 'Rp 30.000', image: 'prod-frozen.png' },
+        { name: 'Sosis Ayam', price: 'Rp 25.000', image: 'sosis.png' },
+        { name: 'Sosis Sapi', price: 'Rp 20.000', image: 'prod-frozen.png'},
         { name: 'Bakso Sapi', price: 'Rp 35.000', image: 'prod-frozen.png' },
         { name: 'Kentang Goreng', price: 'Rp 28.000', image: 'prod-frozen.png' },
         { name: 'Dimsum (isi 12)', price: 'Rp 35.000', image: 'prod-frozen.png' },
-        { name: 'Cireng Rujak', price: 'Rp 15.000', image: 'prod-frozen.png' }
+        { name: 'Cireng Bulat Merah', price: 'Rp 6.000', image: 'cirengmerah.png' }
     ],
     'Snack & Minuman': [
         { name: 'Keripik Singkong', price: 'Rp 10.000', image: 'prod-stationery.png' }, // Placeholder image

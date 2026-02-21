@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HIJRAH TOKO | Warung Modern</title>
+    <title>HIJRAH TOKO | Warung Alat Tulis & Frozen Food Terlengkap Di Pariaman</title>
     <link rel="stylesheet" href="style.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,38 +32,12 @@
 
     <!-- Hero Carousel -->
     <header class="hero-carousel">
-        <div class="carousel-container">
-            <div class="slide active">
-                <img src="hero-image-v3.png" alt="HIJRAH Toko Stationery and Frozen Food">
-                <div class="slide-content">
-                    <h1>Selamat Datang di HIJRAH TOKO</h1>
-                    <p>Pusat Alat Tulis & Frozen Food Terlengkap</p>
-                    <a href="#products" class="btn-primary">Lihat Produk</a>
-                </div>
-            </div>
-            <div class="slide">
-                <!-- Placeholder for slide 2 -->
-                <div class="placeholder-image" style="background: linear-gradient(135deg, #D32F2F 0%, #000 100%);">
-                </div>
-                <div class="slide-content">
-                    <h1>Promo Spesial Minggu Ini</h1>
-                    <p>Dapatkan harga terbaik untuk kebutuhan harianmu.</p>
-                    <a href="#event" class="btn-primary">Cek Event</a>
-                </div>
-            </div>
-            <div class="slide">
-                <!-- Placeholder for slide 3 -->
-                <div class="placeholder-image" style="background: linear-gradient(135deg, #000 0%, #333 100%);"></div>
-                <div class="slide-content">
-                    <h1>Belanja Mudah & Hemat</h1>
-                    <p>Solusi lengkap untuk rumah tangga Anda.</p>
-                    <a href="#contact" class="btn-primary">Hubungi Kami</a>
-                </div>
-            </div>
+        <div class="carousel-container" id="carousel-container">
+            <!-- Dynamic Slides -->
         </div>
         <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
         <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
-        <div class="carousel-dots"></div>
+        <div class="carousel-dots" id="carousel-dots"></div>
     </header>
 
     <!-- Tentang Kami -->
@@ -72,13 +46,14 @@
             <h2 class="section-title">Tentang Kami</h2>
             <div class="about-content">
                 <div class="about-img">
-                    <img src="about-image.png" alt="Pemilik Hirah Toko">
+                    <img src="hijrahlogo_(2).png" alt="Pemilik Hirah Toko">
                 </div>
                 <div class="about-text">
                     <p>HIJRAH TOKO adalah warung modern yang menyediakan berbagai kebutuhan Alat Tulis Kantor (ATK) dan
                         Sekolah serta aneka Frozen Food dengan harga terjangkau dan kualitas terjamin.</p>
                     <p>Kami hadir untuk memenuhi kebutuhan produktivitas dan kuliner Anda dalam satu tempat yang nyaman.
-                        Silakan berkunjung dan rasakan pengalaman belanja yang ramah.</p>
+                        Silakan berkunjung alamat kami (jl.pariaman-sicincin bisati sungai sariak kec.VII koto sei
+                        sarik) dan rasakan pengalaman belanja yang ramah.</p>
                 </div>
             </div>
         </div>
@@ -137,25 +112,8 @@
     <section id="event" class="section">
         <div class="container">
             <h2 class="section-title">Event Terbaru</h2>
-            <div class="event-card">
-                <div class="event-date">
-                    <span class="day">25</span>
-                    <span class="month">Jan</span>
-                </div>
-                <div class="event-details">
-                    <h3>Pasar Murah Awal Tahun</h3>
-                    <p>Dapatkan diskon spesial untuk pembelian paket sembako. Jangan lewatkan kesempatan ini!</p>
-                </div>
-            </div>
-            <div class="event-card">
-                <div class="event-date">
-                    <span class="day">02</span>
-                    <span class="month">Feb</span>
-                </div>
-                <div class="event-details">
-                    <h3>Jumat Berkah</h3>
-                    <p>Berbagi makanan gratis setiap hari Jumat untuk yang membutuhkan di depan toko.</p>
-                </div>
+            <div id="events-container">
+                <!-- Dynamic Events -->
             </div>
         </div>
     </section>
@@ -206,7 +164,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>

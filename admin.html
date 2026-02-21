@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HIJRAH TOKO</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-container {
+            padding: 100px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .product-table th,
+        .product-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .product-table th {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .modal-form {
+            display: none;
+            background: #f9f9f9;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">HIJRAH<span>ADMIN</span></a>
+            <div id="user-info" style="color: white; display: flex; align-items: center; gap: 20px;">
+                <span id="user-email"></span>
+                <button id="logout-btn" style="background:#333; font-size: 0.9rem;" class="btn-primary">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <div id="login-section" class="container">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn-primary" style="width:100%">Login</button>
+            </form>
+            <p id="login-error" style="color: red; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="admin-container dashboard">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="products">Products</button>
+            <button class="tab-btn" data-tab="events">Events</button>
+            <button class="tab-btn" data-tab="carousel">Carousel</button>
+        </div>
+
+        <!-- PRODUCTS TAB -->
+        <div id="tab-products" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Manage Products</h2>
+                <button id="add-product-btn" class="btn-primary">Add New Product</button>
+            </div>
+
+            <div id="product-form-container" class="modal-form">
+                <h3 id="product-form-title">Add Product</h3>
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="prod-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="text" id="prod-price" placeholder="Rp 0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Image Filename</label>
+                        <input type="text" id="prod-image" placeholder="image.png">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="prod-category" required>
+                            <option value="Alat Tulis">Alat Tulis</option>
+                            <option value="Frozen Food">Frozen Food</option>
+                            <option value="Snack & Minuman">Snack & Minuman</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Save Product</button>
+                    <button type="button" class="btn-primary cancel-btn"
+                        style="background:#ccc; color:#000;">Cancel</button>
+                </form>
+            </div>
+
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="product-table-body"></tbody>
+            </table>
+        </div>
+
+        <!-- EVENTS TAB -->
+        <div id="tab-events" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Manage Events</h2>
+                <button id="add-event-btn" class="btn-primary">Add New Event</button>
+            </div>
+
+            <div id="event-form-container" class="modal-form">
+                <h3 id="event-form-title">Add Event</h3>
+                <form id="event-form">
+                    <input type="hidden" id="event-id">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="evt-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date Display (e.g., "25 Jan")</label>
+                        <input type="text" id="evt-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="evt-desc" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Save Event</button>
+                    <button type="button" class="btn-primary cancel-btn"
+                        style="background:#ccc; color:#000;">Cancel</button>
+                </form>
+            </div>
+
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="event-table-body"></tbody>
+            </table>
+        </div>
+
+        <!-- CAROUSEL TAB -->
+        <div id="tab-carousel" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Manage Carousel</h2>
+                <button id="add-carousel-btn" class="btn-primary">Add New Slide</button>
+            </div>
+
+            <div id="carousel-form-container" class="modal-form">
+                <h3 id="carousel-form-title">Add Slide</h3>
+                <form id="carousel-form">
+                    <input type="hidden" id="carousel-id">
+                    <div class="form-group">
+                        <label>Image Filename</label>
+                        <input type="text" id="car-image" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="car-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Subtitle</label>
+                        <input type="text" id="car-subtitle" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Save Slide</button>
+                    <button type="button" class="btn-primary cancel-btn"
+                        style="background:#ccc; color:#000;">Cancel</button>
+                </form>
+            </div>
+
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Subtitle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="carousel-table-body"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+
+</html>
