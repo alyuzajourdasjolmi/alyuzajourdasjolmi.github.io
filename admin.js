@@ -24,25 +24,39 @@ const eventForm = document.getElementById('event-form');
 const addEventBtn = document.getElementById('add-event-btn');
 const cancelEventBtn = document.getElementById('cancel-event-btn');
 
-// =============================================
-// AUTH (Supabase)
-// =============================================
+// --- AUTH (Supabase) ---
 async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-        showDashboard(user);
-    } else {
+    console.log("Checking authentication status...");
+    try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) {
+            console.error("Auth check error:", error);
+            showLogin();
+            return;
+        }
+
+        if (data.user) {
+            console.log("User found:", data.user.email);
+            showDashboard(data.user);
+        } else {
+            console.log("No active session.");
+            showLogin();
+        }
+    } catch (err) {
+        console.error("Critical error in checkUser:", err);
         showLogin();
     }
 }
 
 function showLogin() {
+    console.log("Showing login screen");
     loginSection.style.display = 'block';
     dashboardSection.style.display = 'none';
     dashboardSection.classList.remove('active');
 }
 
 function showDashboard(user) {
+    console.log("Showing dashboard for:", user.email);
     loginSection.style.display = 'none';
     dashboardSection.style.display = 'block';
     dashboardSection.classList.add('active');
@@ -58,6 +72,8 @@ if (loginForm) {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
+        console.log("Attempting login for:", email);
+
         if (loginError) {
             loginError.innerText = '';
             loginError.style.display = 'none';
@@ -70,16 +86,19 @@ if (loginForm) {
             });
 
             if (error) {
+                console.error("Login failed:", error.message);
                 if (loginError) {
                     loginError.innerText = error.message;
                     loginError.style.display = 'block';
                 }
             } else {
+                console.log("Login success!");
                 checkUser();
             }
         } catch (err) {
+            console.error("CORS or Connection Error during login:", err);
             if (loginError) {
-                loginError.innerText = 'Connection error: ' + err.message;
+                loginError.innerText = 'Connection error. Please ensure you are running the project via "npm run dev".';
                 loginError.style.display = 'block';
             }
         }
