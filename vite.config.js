@@ -1,10 +1,11 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import { fileURLToPath } from 'url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
-    // Tambahkan baris ini agar semua path file (JS/CSS) bersifat relatif
-    // Sangat penting untuk GitHub Pages agar tidak terjadi error 404
-    base: './', 
+    base: './',
     build: {
         rollupOptions: {
             input: {
