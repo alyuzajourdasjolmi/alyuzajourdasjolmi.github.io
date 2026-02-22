@@ -2,28 +2,39 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 /**
  * Konfigurasi Supabase menggunakan Environment Variables dari Vite.
- * Pastikan variabel diawali dengan VITE_ agar bisa terbaca.
  */
 
-// Menggunakan ?. untuk mencegah crash jika import.meta.env belum terdefinisi
-const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+// Debugging Context: Cek apakah kita di dalam Vite atau bukan
+const isVite = typeof import.meta !== 'undefined' && !!import.meta.env;
 
-// Logika pengecekan untuk membantu debugging
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.group("❌ CONFIGURATION ERROR: Supabase Credentials Tidak Ditemukan!");
-    console.error("Aplikasi tidak bisa terhubung ke database karena API Key kosong.");
+if (!isVite) {
+    console.group("🚨 CRITICAL ERROR: Environment Tidak Terdeteksi!");
+    console.error("Browser tidak mendeteksi sistem 'Vite'.");
     console.info(
-        "💡 LANGKAH PERBAIKAN:\n" +
-        "1. PASTIKAN kamu menjalankan project dengan perintah: 'npm run dev'\n" +
-        "2. RESTART SERVER: Hentikan terminal (Ctrl+C) lalu jalankan lagi 'npm run dev' agar file .env dibaca ulang.\n" +
-        "3. CEK FILENAME: Pastikan nama file adalah '.env' (titik di depan, tanpa akhiran .txt).\n" +
-        "4. GITHUB DEPLOY: Jika ini muncul di website yang sudah live, pastikan kamu sudah mengisi 'Repository Secrets' di Settings GitHub."
+        "💡 PENYEBAB UTAMA:\n" +
+        "Kamu kemungkinan besar membuka file HTML secara langsung (double click) atau lewat 'Live Server'.\n\n" +
+        "💡 SOLUSI:\n" +
+        "Kamu WAJIB menggunakan alamat dari terminal, contoh: http://localhost:5173\n" +
+        "Pastikan di address bar browser kamu tulisannya bukan 'C:/Users/...' tapi 'localhost:...' atau '127.0.0.1:...'"
     );
     console.groupEnd();
 }
 
-// Inisialisasi client. Jika credential tidak ada, bernilai null agar tidak crash.
+const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+
+if (isVite && (!supabaseUrl || !supabaseAnonKey)) {
+    console.group("❌ CONFIGURATION ERROR: Variabel .env Kosong!");
+    console.error("Vite berjalan, tapi tidak bisa menemukan VITE_SUPABASE_URL di file .env.");
+    console.info(
+        "💡 LANGKAH PERBAIKAN:\n" +
+        "1. Pastikan file bernama '.env' (bukan .env.txt).\n" +
+        "2. Pastikan isi file .env sudah di-save.\n" +
+        "3. RESTART VITE: Tekan Ctrl+C di terminal, lalu ketik 'npm run dev' lagi."
+    );
+    console.groupEnd();
+}
+
 export const supabase = (supabaseUrl && supabaseAnonKey)
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
