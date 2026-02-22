@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Ganti jika nama branch utama kamu berbeda
+      - main
 
 permissions:
   contents: write
@@ -20,9 +20,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install Dependencies 📦
-        run: npm install
+        # Menggunakan 'npm ci' lebih stabil untuk CI/CD daripada 'npm install'
+        run: npm ci || npm install
+
+      - name: Fix Vite Permissions 🔓
+        # Ini adalah kunci untuk mengatasi 'Permission denied'
+        run: chmod +x ./node_modules/.bin/vite
 
       - name: Build 🏗️
         run: npm run build
@@ -34,4 +40,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
-          branch: gh-pages  # Deploy ke branch gh-pages
+          branch: gh-pages
