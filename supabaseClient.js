@@ -1,45 +1,39 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 /**
- * Supabase configuration using Vite environment variables.
- * Source code must run through Vite (`npm run dev` / `npm run preview`).
+ * Konfigurasi Supabase menggunakan Environment Variables dari Vite.
+ * Bekerja baik di Local (dev) maupun GitHub Pages (prod).
  */
-const isViteRuntime = typeof import.meta !== 'undefined' && !!import.meta.env;
-const requiredEnvKeys = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'];
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!isViteRuntime) {
-    console.group('CRITICAL ERROR: Vite environment not detected');
-    console.error("Browser tidak mendeteksi runtime Vite.");
-    console.info(
-        "Penyebab utama:\n" +
-        "- File HTML dibuka langsung (double click / file://)\n" +
-        "- Menjalankan source dengan Live Server\n\n" +
-        "Solusi:\n" +
-        "- Jalankan `npm run dev`\n" +
-        "- Buka URL dari terminal, misalnya `http://127.0.0.1:5173`"
-    );
-    console.groupEnd();
+// Pengecekan Error secara Profesional
+if (!supabaseUrl || !supabaseAnonKey) {
+    const isFileProtocol = window.location.protocol === 'file:';
+
+    if (isFileProtocol) {
+        console.group('🚨 ERROR: Jangan Buka File Secara Langsung!');
+        console.error("Browser mendeteksi protokol 'file://'.");
+        console.info(
+            "Solusi Lokal:\n" +
+            "1. Jalankan `npm run dev` di terminal.\n" +
+            "2. Buka URL yang muncul (misal: http://localhost:5173)."
+        );
+        console.groupEnd();
+    } else {
+        console.group('❌ CONFIGURATION ERROR: API Key Missing');
+        console.error("Aplikasi tidak bisa terhubung ke database.");
+        console.info(
+            "Solusi Deployment (GitHub Pages):\n" +
+            "1. Buka Repository Settings > Secrets > Actions.\n" +
+            "2. Tambahkan VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY.\n" +
+            "3. Lakukan 'Push' ulang untuk memicu build baru."
+        );
+        console.groupEnd();
+    }
 }
 
-const missingEnvKeys = isViteRuntime
-    ? requiredEnvKeys.filter((key) => !import.meta.env?.[key])
-    : requiredEnvKeys.slice();
-
-if (isViteRuntime && missingEnvKeys.length > 0) {
-    console.group('CONFIGURATION ERROR: Missing .env values');
-    console.error(`Variabel yang belum diisi: ${missingEnvKeys.join(', ')}`);
-    console.info(
-        "Langkah perbaikan:\n" +
-        "1. Isi semua variabel yang kosong di file `.env`.\n" +
-        "2. Simpan perubahan `.env`.\n" +
-        "3. Restart Vite: Ctrl+C lalu jalankan `npm run dev` lagi."
-    );
-    console.groupEnd();
-}
-
-const supabaseUrl = isViteRuntime ? import.meta.env.VITE_SUPABASE_URL : null;
-const supabaseAnonKey = isViteRuntime ? import.meta.env.VITE_SUPABASE_ANON_KEY : null;
-
-export const supabase = isViteRuntime && missingEnvKeys.length === 0
+// Inisialisasi client
+export const supabase = (supabaseUrl && supabaseAnonKey)
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
