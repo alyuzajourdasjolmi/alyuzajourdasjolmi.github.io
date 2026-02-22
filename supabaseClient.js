@@ -4,8 +4,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
  * Konfigurasi Supabase menggunakan Environment Variables dari Vite.
  * Bekerja baik di Local (dev) maupun GitHub Pages (prod).
  */
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Gunakan optional chaining (?.) agar tidak crash jika import.meta.env belum ada
+const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
 
 // Pengecekan Error secara Profesional
 if (!supabaseUrl || !supabaseAnonKey) {
