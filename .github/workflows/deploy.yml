@@ -13,33 +13,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js ⚙️
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Dependencies 📦
-        # Menggunakan 'npm ci' lebih stabil untuk CI/CD daripada 'npm install'
+      - name: Install dependencies
         run: npm ci || npm install
 
-      - name: Fix Vite Permissions 🔓
-        # Ini adalah kunci untuk mengatasi 'Permission denied'
+      - name: Fix Vite permissions
         run: chmod +x ./node_modules/.bin/vite
 
-      - name: Build 🏗️
+      - name: Validate required secrets
         run: |
-          echo "Mengecek apakah Secret tersedia..."
-          if [ -z "$VITE_SUPABASE_URL" ]; then echo "❌ URL Kosong!"; else echo "✅ URL Tersedia"; fi
-          npm run build
+          missing=0
+
+          if [ -z "$VITE_SUPABASE_URL" ]; then
+            echo "ERROR: VITE_SUPABASE_URL is empty."
+            missing=1
+          else
+            echo "OK: VITE_SUPABASE_URL is set."
+          fi
+
+          if [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+            echo "ERROR: VITE_SUPABASE_ANON_KEY is empty."
+            missing=1
+          else
+            echo "OK: VITE_SUPABASE_ANON_KEY is set."
+          fi
+
+          if [ "$missing" -ne 0 ]; then
+            echo "Failing build because required secrets are missing."
+            exit 1
+          fi
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Deploy to GitHub Pages 🚀
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist

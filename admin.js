@@ -10,6 +10,7 @@ const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
 const userInfo = document.getElementById('user-info');
 const toastContainer = document.getElementById('toast-container');
+const loginSubmitButton = loginForm?.querySelector('button[type="submit"]');
 
 // Product elements
 const productTableBody = document.getElementById('product-table-body');
@@ -25,10 +26,18 @@ const eventForm = document.getElementById('event-form');
 const addEventBtn = document.getElementById('add-event-btn');
 const cancelEventBtn = document.getElementById('cancel-event-btn');
 
+const SUPABASE_CONFIG_MESSAGE = "Konfigurasi Supabase belum aktif. Jalankan lewat `npm run dev` untuk lokal atau pastikan GitHub Secrets VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY sudah diisi.";
+
 // =============================================
 // UI FEEDBACK (Toast)
 // =============================================
 function showToast(message, type = 'info') {
+    if (!toastContainer) {
+        if (type === 'error') console.error(message);
+        else console.log(message);
+        return;
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
 
@@ -45,12 +54,66 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
+function showConfigError(message = SUPABASE_CONFIG_MESSAGE, withToast = false) {
+    if (withToast) showToast(message, 'error');
+
+    if (loginError) {
+        loginError.innerText = message;
+        loginError.style.display = 'block';
+    }
+
+    if (loginSubmitButton) {
+        loginSubmitButton.disabled = true;
+        loginSubmitButton.title = 'Supabase configuration is missing';
+    }
+}
+
+function clearConfigError() {
+    if (loginError) {
+        loginError.innerText = '';
+        loginError.style.display = 'none';
+    }
+
+    if (loginSubmitButton) {
+        loginSubmitButton.disabled = false;
+        loginSubmitButton.title = '';
+    }
+}
+
+function renderConfigHint() {
+    if (supabase) return;
+
+    const existingHint = document.getElementById('supabase-config-hint');
+    if (existingHint) return;
+
+    const loginBox = document.querySelector('#login-section .login-box');
+    if (!loginBox) return;
+
+    const hint = document.createElement('p');
+    hint.id = 'supabase-config-hint';
+    hint.style.color = '#d32f2f';
+    hint.style.marginTop = '10px';
+    hint.style.fontWeight = '600';
+    hint.innerText = "Mode konfigurasi belum siap. Gunakan `npm run dev` (lokal) atau cek Secrets di GitHub.";
+    loginBox.appendChild(hint);
+}
+
+function ensureSupabaseReady(withToast = false) {
+    if (supabase) {
+        clearConfigError();
+        return true;
+    }
+
+    renderConfigHint();
+    showConfigError(SUPABASE_CONFIG_MESSAGE, withToast);
+    return false;
+}
+
 // =============================================
 // AUTH (Supabase)
 // =============================================
 async function checkUser() {
-    if (!supabase) {
-        showToast("Error: Supabase tidak terhubung. Gunakan 'npm run dev'.", "error");
+    if (!ensureSupabaseReady(false)) {
         showLogin();
         return;
     }
@@ -96,6 +159,9 @@ function showDashboard(user) {
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        if (!ensureSupabaseReady(true)) return;
+
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
@@ -124,6 +190,8 @@ if (loginForm) {
 // Logout handler
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
+        if (!ensureSupabaseReady(true)) return;
+
         const { error } = await supabase.auth.signOut();
         if (error) {
             showToast("Gagal Logout: " + error.message, "error");
@@ -138,6 +206,8 @@ if (logoutBtn) {
 // PRODUCT MANAGEMENT
 // =============================================
 async function fetchProducts() {
+    if (!ensureSupabaseReady(false)) return;
+
     try {
         const { data, error } = await supabase
             .from('products')
@@ -209,6 +279,8 @@ function editProduct(id, products) {
 }
 
 async function deleteProduct(id) {
+    if (!ensureSupabaseReady(true)) return;
+
     if (confirm('Hapus produk ini?')) {
         try {
             const { error } = await supabase.from('products').delete().eq('id', id);
@@ -224,6 +296,8 @@ async function deleteProduct(id) {
 if (productForm) {
     productForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (!ensureSupabaseReady(true)) return;
+
         const id = document.getElementById('product-id').value;
 
         const productData = {
@@ -255,6 +329,8 @@ if (productForm) {
 // EVENTS MANAGEMENT
 // =============================================
 async function fetchEvents() {
+    if (!ensureSupabaseReady(false)) return;
+
     try {
         const { data, error } = await supabase
             .from('events')
@@ -323,6 +399,8 @@ function editEvent(id, events) {
 }
 
 async function deleteEvent(id) {
+    if (!ensureSupabaseReady(true)) return;
+
     if (confirm('Hapus event ini?')) {
         try {
             const { error } = await supabase.from('events').delete().eq('id', id);
@@ -338,6 +416,8 @@ async function deleteEvent(id) {
 if (eventForm) {
     eventForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (!ensureSupabaseReady(true)) return;
+
         const id = document.getElementById('event-id').value;
 
         const eventData = {
@@ -365,4 +445,5 @@ if (eventForm) {
     });
 }
 
+ensureSupabaseReady(false);
 checkUser();
