@@ -23,13 +23,14 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies 📦
+        # Menggunakan 'npm ci' lebih stabil untuk CI/CD daripada 'npm install'
         run: npm ci || npm install
 
       - name: Fix Vite Permissions 🔓
+        # Ini adalah kunci untuk mengatasi 'Permission denied'
         run: chmod +x ./node_modules/.bin/vite
 
       - name: Build 🏗️
-        # PENTING: Bagian ini yang menyambungkan GitHub Secrets ke kode JavaScript kamu
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
