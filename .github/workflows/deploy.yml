@@ -31,7 +31,10 @@ jobs:
         run: chmod +x ./node_modules/.bin/vite
 
       - name: Build 🏗️
-        run: npm run build
+        run: |
+          echo "Mengecek apakah Secret tersedia..."
+          if [ -z "$VITE_SUPABASE_URL" ]; then echo "❌ URL Kosong!"; else echo "✅ URL Tersedia"; fi
+          npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
