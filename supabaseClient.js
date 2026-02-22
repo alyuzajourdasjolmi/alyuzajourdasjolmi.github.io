@@ -11,16 +11,19 @@ const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
 
 // Logika pengecekan untuk membantu debugging
 if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("❌ ERROR: Supabase Credentials tidak ditemukan!");
+    console.group("❌ CONFIGURATION ERROR: Supabase Credentials Tidak Ditemukan!");
+    console.error("Aplikasi tidak bisa terhubung ke database karena API Key kosong.");
     console.info(
-        "💡 Solusi:\n" +
-        "1. Lokal: Pastikan file .env ada dan berisi VITE_SUPABASE_URL.\n" +
-        "2. GitHub: Pastikan sudah mengisi Secrets di Settings > Secrets > Actions.\n" +
-        "3. Pastikan menjalankan project dengan perintah 'npm run dev'."
+        "💡 LANGKAH PERBAIKAN:\n" +
+        "1. PASTIKAN kamu menjalankan project dengan perintah: 'npm run dev'\n" +
+        "2. RESTART SERVER: Hentikan terminal (Ctrl+C) lalu jalankan lagi 'npm run dev' agar file .env dibaca ulang.\n" +
+        "3. CEK FILENAME: Pastikan nama file adalah '.env' (titik di depan, tanpa akhiran .txt).\n" +
+        "4. GITHUB DEPLOY: Jika ini muncul di website yang sudah live, pastikan kamu sudah mengisi 'Repository Secrets' di Settings GitHub."
     );
+    console.groupEnd();
 }
 
 // Inisialisasi client. Jika credential tidak ada, bernilai null agar tidak crash.
-export const supabase = (supabaseUrl && supabaseAnonKey) 
-    ? createClient(supabaseUrl, supabaseAnonKey) 
+export const supabase = (supabaseUrl && supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
