@@ -208,8 +208,8 @@ async function loadEvents() {
         container.innerHTML = eventsData.map(evt => `
             <div class="event-card">
                 <div class="event-date">
-                    <span class="day">${String(evt.event_day).padStart(2, '0')}</span>
-                    <span class="month">${evt.event_month}</span>
+                    <span class="day">${String(evt['event-day']).padStart(2, '0')}</span>
+                    <span class="month">${evt['event-month']}</span>
                 </div>
                 <div class="event-details">
                     <h3>${evt.title}</h3>

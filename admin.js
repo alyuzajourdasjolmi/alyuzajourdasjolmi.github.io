@@ -351,7 +351,7 @@ function renderEvents(events) {
     events.forEach(e => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><strong>${String(e.event_day).padStart(2, '0')}</strong> ${e.event_month}</td>
+            <td><strong>${String(e['event-day']).padStart(2, '0')}</strong> ${e['event-month']}</td>
             <td>${e.title || ''}</td>
             <td>${e.description || ''}</td>
             <td>
@@ -391,8 +391,8 @@ function editEvent(id, events) {
         document.getElementById('event-id').value = e.id;
         document.getElementById('event-title').value = e.title;
         document.getElementById('event-description').value = e.description;
-        document.getElementById('event-day').value = e.event_day;
-        document.getElementById('event-month').value = e.event_month;
+        document.getElementById('event-day').value = e['event-day'];
+        document.getElementById('event-month').value = e['event-month'];
         document.getElementById('event-form-title').innerText = 'Edit Event';
         eventFormContainer.style.display = 'block';
     }
@@ -423,8 +423,8 @@ if (eventForm) {
         const eventData = {
             title: document.getElementById('event-title').value,
             description: document.getElementById('event-description').value,
-            event_day: parseInt(document.getElementById('event-day').value),
-            event_month: document.getElementById('event-month').value
+            'event-day': parseInt(document.getElementById('event-day').value),
+            'event-month': document.getElementById('event-month').value
         };
 
         try {
