@@ -308,12 +308,20 @@ if (productForm) {
         if (imageFile) {
             try {
                 showToast("Mengupload gambar...", "info");
-                const fileName = `${Date.now()}_${imageFile.name}`;
+
+                // Sanitasi nama file: ambil ekstensi saja, ganti nama dengan timestamp + nama bersih
+                const fileExt = imageFile.name.split('.').pop();
+                const cleanName = imageFile.name.split('.')[0].replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const fileName = `${Date.now()}_${cleanName}.${fileExt}`;
+
                 const { data, error: uploadError } = await supabase.storage
                     .from('products')
                     .upload(fileName, imageFile);
 
-                if (uploadError) throw uploadError;
+                if (uploadError) {
+                    console.error("Upload error detail:", uploadError);
+                    throw uploadError;
+                }
 
                 // Get Public URL
                 const { data: { publicUrl } } = supabase.storage
@@ -323,7 +331,7 @@ if (productForm) {
                 imageUrl = publicUrl;
             } catch (err) {
                 showToast("Gagal upload gambar: " + err.message, "error");
-                return; // Stop if upload fails
+                return;
             }
         }
 
