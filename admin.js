@@ -299,11 +299,38 @@ if (productForm) {
         if (!ensureSupabaseReady(true)) return;
 
         const id = document.getElementById('product-id').value;
+        const imageFile = document.getElementById('prod-image-file').files[0];
+        const imageText = document.getElementById('prod-image').value;
+
+        let imageUrl = imageText;
+
+        // Handle Image Upload if file is chosen
+        if (imageFile) {
+            try {
+                showToast("Mengupload gambar...", "info");
+                const fileName = `${Date.now()}_${imageFile.name}`;
+                const { data, error: uploadError } = await supabase.storage
+                    .from('products')
+                    .upload(fileName, imageFile);
+
+                if (uploadError) throw uploadError;
+
+                // Get Public URL
+                const { data: { publicUrl } } = supabase.storage
+                    .from('products')
+                    .getPublicUrl(fileName);
+
+                imageUrl = publicUrl;
+            } catch (err) {
+                showToast("Gagal upload gambar: " + err.message, "error");
+                return; // Stop if upload fails
+            }
+        }
 
         const productData = {
             name: document.getElementById('prod-name').value,
             price: document.getElementById('prod-price').value,
-            image: document.getElementById('prod-image').value,
+            image: imageUrl,
             category: document.getElementById('prod-category').value
         };
 
@@ -318,6 +345,7 @@ if (productForm) {
                 showToast("Produk berhasil ditambah", "success");
             }
             productFormContainer.style.display = 'none';
+            productForm.reset(); // Reset form including file input
             fetchProducts();
         } catch (err) {
             showToast("Gagal menyimpan: " + err.message, "error");

@@ -166,8 +166,8 @@
         <div class="container nav-container">
             <a href="index.html" class="logo">HIJRAH<span>ADMIN</span></a>
             <div style="display: flex; align-items: center; gap: 20px;">
-                <a href="index.html" class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">
-                    <i class="fas fa-home"></i> Kembali ke Home
+                <a href="index.html" class="btn-primary icon-btn" title="Kembali ke Home">
+                    <i class="fas fa-home"></i>
                 </a>
                 <div id="user-info" style="color: white;"></div>
             </div>
@@ -212,8 +212,11 @@
                     <input type="text" id="prod-price" placeholder="Rp 0" required>
                 </div>
                 <div class="form-group">
-                    <label>Image Filename</label>
-                    <input type="text" id="prod-image" placeholder="image.png">
+                    <label>Image (Upload or Filename)</label>
+                    <div style="display: flex; gap: 10px; flex-direction: column;">
+                        <input type="file" id="prod-image-file" accept="image/*">
+                        <input type="text" id="prod-image" placeholder="Or enter filename/URL: image.png">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Category</label>
