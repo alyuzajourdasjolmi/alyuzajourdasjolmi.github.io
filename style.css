@@ -684,7 +684,12 @@ footer {
         gap: 0;
         transition: var(--transition);
         border-left: 2px solid var(--primary-red);
-        z-index: 999;
+        z-index: 1001;
+    }
+
+    .nav-links li a {
+        display: block;
+        padding: 10px;
     }
 
     .nav-links.active {
@@ -792,15 +797,15 @@ footer {
     }
 
     .navbar {
-        padding: 15px 0;
+        padding: 10px 0;
     }
 
     .logo {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 
     .nav-links {
-        width: 80%;
+        width: 85%;
     }
 
     .section {
@@ -815,16 +820,36 @@ footer {
     .slide-content h1 {
         font-size: 1.6rem;
         line-height: 1.3;
+        padding: 0 10px;
     }
 
     .slide-content p {
         font-size: 0.9rem;
         margin-bottom: 20px;
+        padding: 0 10px;
     }
 
-    .btn-primary {
-        padding: 8px 20px;
-        font-size: 0.85rem;
+    .action-btn {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+
+    .admin-container .mb-4 {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+
+    .admin-container .mb-4 div {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+    }
+
+    .admin-container .mb-4 div button {
+        flex: 1;
+        padding: 10px !important;
+        font-size: 0.85rem !important;
     }
 
     .prev {
@@ -902,7 +927,38 @@ footer {
     .modal-product-img {
         height: 80px;
     }
+
+    .admin-container {
+        padding: 85px 10px 30px;
+    }
+
+    .product-table {
+        font-size: 0.8rem;
+    }
+
+    .dashboard h2 {
+        font-size: 1.3rem;
+    }
+
+    #product-form-container {
+        padding: 15px;
+    }
 }
+
+/* Global Responsive Utilities */
+img {
+    max-width: 100%;
+}
+
+.product-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
 
 /* Extra Small Mobile (max 375px) */
 @media (max-width: 375px) {
