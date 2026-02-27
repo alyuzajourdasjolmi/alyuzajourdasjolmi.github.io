@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: # Memungkinkan kamu menjalankan build ulang secara manual
 
 permissions:
   contents: write
@@ -11,11 +12,6 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-
 
     steps:
       - name: Checkout
@@ -30,33 +26,8 @@ jobs:
       - name: Install dependencies
         run: npm ci || npm install
 
-      - name: Fix Vite permissions
-        run: chmod +x ./node_modules/.bin/vite 
-
-      - name: Validate required secrets
-        run: |
-          missing=0
-
-          if [ -z "$VITE_SUPABASE_URL" ]; then
-            echo "ERROR: VITE_SUPABASE_URL is empty."
-            missing=1
-          else
-            echo "OK: VITE_SUPABASE_URL is set."
-          fi
-
-          if [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
-            echo "ERROR: VITE_SUPABASE_ANON_KEY is empty."
-            missing=1
-          else
-            echo "OK: VITE_SUPABASE_ANON_KEY is set."
-          fi
-
-          if [ "$missing" -ne 0 ]; then
-            echo "Failing build because required secrets are missing."
-            exit 1
-          fi
-
       - name: Build
+        # Kita memasukkan secrets langsung di tahap build agar terbaca oleh Vite
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
