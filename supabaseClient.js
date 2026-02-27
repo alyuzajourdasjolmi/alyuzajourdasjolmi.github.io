@@ -18,8 +18,13 @@ const getEnv = (key) => {
     return null;
 };
 
-const supabaseUrl = getEnv('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
+// Ganti bagian ini:
+// const supabaseUrl = getEnv('VITE_SUPABASE_URL');
+// const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
+
+// Menjadi ini:
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Diagnostik & Error Handling
 if (!supabaseUrl || !supabaseAnonKey) {
