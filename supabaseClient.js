@@ -9,8 +9,8 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const env = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
 
 // 2. Deklarasikan variabel secara statis agar Vite bisa melakukan "find and replace"
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = env.VITE_SUPABASE_URL;
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY;
 
 // 3. Diagnostik & Error Handling (Tanpa merusak jalannya script lain)
 if (!supabaseUrl || !supabaseAnonKey) {
