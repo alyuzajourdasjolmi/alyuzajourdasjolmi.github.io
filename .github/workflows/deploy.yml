@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Memungkinkan kamu menjalankan build ulang secara manual
+  workflow_dispatch: 
 
 permissions:
   contents: write
@@ -26,9 +26,18 @@ jobs:
       - name: Install dependencies
         run: npm ci || npm install
 
-      - name: Build
-        # Kita memasukkan secrets langsung di tahap build agar terbaca oleh Vite
-        run: npm run build
+      - name: Build and Validate
+        # Script ini akan mengecek apakah Secret kosong SEBELUM melakukan build
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ]; then
+            echo "::error::Koneksi Gagal: VITE_SUPABASE_URL tidak ditemukan di GitHub Secrets!"
+            exit 1
+          fi
+          if [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+            echo "::error::Koneksi Gagal: VITE_SUPABASE_ANON_KEY tidak ditemukan di GitHub Secrets!"
+            exit 1
+          fi
+          npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
