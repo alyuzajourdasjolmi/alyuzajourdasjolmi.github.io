@@ -7,7 +7,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 // Vite mewajibkan pemanggilan statis (full string) agar bisa di-replace saat build
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY; 
 
 // Diagnostik & Error Handling
 if (!supabaseUrl || !supabaseAnonKey) {
